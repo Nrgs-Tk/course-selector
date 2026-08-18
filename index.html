@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سیستم انتخاب واحد</title>
+    <title>انتخاب واحد من</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>🗓️ سیستم انتخاب واحد</h1>
+        <div class="header">
+            <h1>🗓️ انتخاب واحد من</h1>
+            <button id="darkModeToggle" title="تغییر حالت تاریک/روشن">🌙</button>
+        </div>
         
-        <div class="form-section">
+        <div class="form-section" id="formSection">
             <h2 id="formTitle">افزودن درس جدید</h2>
             <form id="courseForm">
                 <input type="hidden" id="editingCourseId" value="">
@@ -18,6 +21,11 @@
                 <div class="form-group">
                     <label for="courseName">نام درس:</label>
                     <input type="text" id="courseName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="courseUnits">تعداد واحد:</label>
+                    <input type="text" id="courseUnits" inputmode="numeric" pattern="[0-9]*" value="3" required>
                 </div>
                 
                 <div class="form-group">
@@ -49,13 +57,13 @@
                 <div class="form-group">
                     <label for="examDate">تاریخ امتحان :</label>
                     <div class="jalali-date">
-                        <select id="examYear" required>
+                        <select id="examYear">
                             <option value="">سال</option>
                         </select>
-                        <select id="examMonth" required>
+                        <select id="examMonth">
                             <option value="">ماه</option>
                         </select>
-                        <select id="examDay" required>
+                        <select id="examDay">
                             <option value="">روز</option>
                         </select>
                     </div>
@@ -63,19 +71,19 @@
                 
                 <div class="form-group">
                     <label for="examStartTime">ساعت شروع امتحان:</label>
-                    <select id="examStartTime" required>
+                    <select id="examStartTime">
                         <option value="">انتخاب ساعت...</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="examEndTime">ساعت پایان امتحان:</label>
-                    <select id="examEndTime" required>
+                    <select id="examEndTime">
                         <option value="">انتخاب ساعت...</option>
                     </select>
                 </div>
                 
-                <button type="submit" id="submitBtn">افزودن به برنامه</button>
+                <button type="submit" id="submitBtn">💾 افزودن به برنامه</button>
             </form>
         </div>
         
@@ -96,6 +104,12 @@
         
         <div class="selected-courses">
             <h2>دروس انتخاب شده</h2>
+            <div class="total-units">
+                مجموع واحدهای انتخابی: <span id="totalUnits">0</span>
+            </div>
+            <div class="total-days">
+                تعداد روزهای حضور در دانشگاه : <span id="totalDays">0</span>
+            </div>
             <ul id="courseList"></ul>
         </div>
     </div>
