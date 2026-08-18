@@ -1,3 +1,4 @@
+
 @font-face {
     font-family: 'Rastin';
     src: url('Rastin.woff2') format('woff2'),
@@ -173,7 +174,14 @@ button[type="submit"]:hover {
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
-#printBtn {
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#printBtn,
+#downloadImageBtn {
     background-color: #e91e63;
     color: #ffffff;
     border: none;
@@ -183,22 +191,29 @@ button[type="submit"]:hover {
     font-family: 'Rastin', 'Vazirmatn', sans-serif;
     font-weight: bold;
     font-size: 14px;
-    margin-bottom: 10px;
     transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
-#printBtn:hover {
+#printBtn:hover,
+#downloadImageBtn:hover {
     background-color: #c2185b;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
-.total-units {
+.stats-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.total-units,
+.total-days {
+    flex: 1;
     background-color: #ffe8ee;
     border: 2px solid #ff4081;
     border-radius: 8px;
     padding: 8px;
-    margin-bottom: 10px;
     font-weight: bold;
     color: #e91e63;
     text-align: center;
@@ -208,15 +223,8 @@ button[type="submit"]:hover {
 
 .total-days {
     background-color: #e8f0fe;
-    border: 2px solid #6b9be0;
-    border-radius: 8px;
-    padding: 8px;
-    margin-bottom: 10px;
-    font-weight: bold;
+    border-color: #6b9be0;
     color: #4a7ec9;
-    text-align: center;
-    font-size: 14px;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 .table-container {
@@ -470,12 +478,14 @@ body.dark-mode button[type="submit"]:hover {
     background-color: #64b5f6;
 }
 
-body.dark-mode #printBtn {
+body.dark-mode #printBtn,
+body.dark-mode #downloadImageBtn {
     background-color: #ffb3c6;
     color: #1e1e1e;
 }
 
-body.dark-mode #printBtn:hover {
+body.dark-mode #printBtn:hover,
+body.dark-mode #downloadImageBtn:hover {
     background-color: #ff80ab;
 }
 
@@ -576,7 +586,7 @@ body.dark-mode .error-message {
     .form-section,
     .error-container,
     .selected-courses,
-    #printBtn,
+    .action-buttons,
     #darkModeToggle {
         display: none !important;
     }
