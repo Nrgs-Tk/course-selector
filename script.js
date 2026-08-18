@@ -361,3 +361,190 @@ function updateCourseList() {
         courseInfo.className = 'course-info';
         
         const daysText = course.days.map(day => dayNames[day]).join('، ');
+        const examInfo = course.examDate ? `امتحان: ${course.examDate} - ${course.examStartTime || '?'} تا ${course.examEndTime || '?'}` : 'امتحان: ندارد';
+        const unitsDisplay = (course.units !== undefined && course.units !== null) ? course.units : 3;
+        
+        courseInfo.innerHTML = `
+            <strong>${course.name}</strong><br>
+            <small>واحد: ${unitsDisplay}</small><br>
+            <small>کلاس: ${daysText} - ${course.startTime} تا ${course.endTime}</small><br>
+            <small>${examInfo}</small>
+        `;
+        
+        const courseActions = document.createElement('div');
+        courseActions.className = 'course-actions';
+        
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn-edit';
+        editBtn.innerHTML = '✏️ ویرایش';
+        editBtn.onclick = () => editCourse(course.id);
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn-delete';
+        deleteBtn.innerHTML = '🗑️ حذف';
+        deleteBtn.onclick = () => removeCourse(course.id);
+        
+        courseActions.appendChild(editBtn);
+        courseActions.appendChild(deleteBtn);
+        
+        li.appendChild(courseInfo);
+        li.appendChild(courseActions);
+        courseList.appendChild(li);
+    });
+}
+
+function updateTotalUnits() {
+    const total = selectedCourses.reduce((sum, course) => sum + ((course.units !== undefined && course.units !== null) ? course.units : 0), 0);
+    document.getElementById('totalUnits').textContent = total;
+}
+
+function updateTotalDays() {
+    const daysSet = new Set();
+    selectedCourses.forEach(course => {
+        course.days.forEach(day => daysSet.add(day));
+    });
+    document.getElementById('totalDays').textContent = daysSet.size;
+}
+
+document.getElementById('courseForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const courseName = document.getElementById('courseName').value.trim();
+    const courseUnitsInput = document.getElementById('courseUnits').value.trim();
+    const courseUnits = parseInt(courseUnitsInput);
+    
+    if (!courseName) {
+        alert('نام درس را وارد کنید!');
+        return;
+    }
+    
+    if (isNaN(courseUnits) || courseUnits < 0) {
+        alert('تعداد واحد باید عددی نامنفی باشد!');
+        return;
+    }
+    
+    const selectedDays = getSelectedDays();
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+    const examDate = getJalaliDate();
+    const examStartTime = document.getElementById('examStartTime').value;
+    const examEndTime = document.getElementById('examEndTime').value;
+    
+    if (selectedDays.length === 0) {
+        alert('لطفاً حداقل یک روز را انتخاب کنید!');
+        return;
+    }
+    
+    if (!startTime || !endTime) {
+        alert('ساعت شروع و پایان کلاس را انتخاب کنید!');
+        return;
+    }
+    
+    if (timeToMinutes(startTime) >= timeToMinutes(endTime)) {
+        alert('ساعت پایان کلاس باید بعد از شروع باشد!');
+        return;
+    }
+    
+    const editingId = document.getElementById('editingCourseId').value;
+    
+    const courseData = {
+        name: courseName,
+        units: courseUnits,
+        days: selectedDays,
+        startTime,
+        endTime,
+        examDate,
+        examStartTime,
+        examEndTime
+    };
+    
+    let newCourse;
+    if (editingId) {
+        const existingIndex = selectedCourses.findIndex(c => c.id === parseInt(editingId));
+        if (existingIndex === -1) {
+            alert('درس مورد نظر یافت نشد!');
+            return;
+        }
+        newCourse = {
+            ...selectedCourses[existingIndex],
+            ...courseData
+        };
+    } else {
+        newCourse = {
+            id: ++courseId,
+            ...courseData,
+            color: SOFT_PINK
+        };
+    }
+    
+    const conflicts = checkTimeConflict(newCourse, selectedCourses);
+    if (conflicts.length > 0) {
+        showErrors(conflicts);
+        return;
+    }
+    
+    if (editingId) {
+        const index = selectedCourses.findIndex(c => c.id === parseInt(editingId));
+        selectedCourses[index] = newCourse;
+    } else {
+        selectedCourses.push(newCourse);
+    }
+    
+    saveCourses();
+    
+    showErrors([]);
+    buildScheduleTable();
+    updateCourseList();
+    updateTotalUnits();
+    updateTotalDays();
+    
+    if (editingId) {
+        setTimeout(() => {
+            const cell = document.querySelector(`.course-cell[data-course-id="${editingId}"]`);
+            if (cell) {
+                cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                const listItem = document.querySelector(`li[data-course-id="${editingId}"]`);
+                if (listItem) {
+                    listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }, 0);
+    }
+    
+    resetForm();
+});
+
+document.getElementById('downloadImageBtn').addEventListener('click', function() {
+    const scheduleContainer = document.getElementById('scheduleContainer');
+    html2canvas(scheduleContainer, {
+        backgroundColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff',
+        scale: 2
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'schedule.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+});
+
+loadCourses();
+populateTimeSelects();
+populateJalaliDateSelects();
+buildScheduleTable();
+updateCourseList();
+updateTotalUnits();
+updateTotalDays();
+
+const darkModeToggle = document.getElementById('darkModeToggle');
+darkModeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+});
+
+if (localStorage.getItem('darkMode') === 'enabled') {
+    document.body.classList.add('dark-mode');
+    darkModeToggle.textContent = '☀️';
+        }
