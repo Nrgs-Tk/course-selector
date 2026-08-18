@@ -11,18 +11,7 @@ for (let hour = 7; hour <= 18; hour++) {
     workingHours.push(`${hourStr}:45`);
 }
 
-const pastelColors = [
-    '#f78fb0',
-    '#f9a8c2',
-    '#d46b8a',
-    '#f8b6c8',
-    '#e782a8',
-    '#f5a8bb',
-    '#f9c1d4',
-    '#e56b8e',
-    '#f48ba9',
-    '#d65f7d'
-];
+const STRONG_PINK = '#e91e63';
 
 const jalaliMonths = [
     'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
@@ -30,7 +19,7 @@ const jalaliMonths = [
 ];
 
 function getRandomColor() {
-    return pastelColors[Math.floor(Math.random() * pastelColors.length)];
+    return STRONG_PINK;
 }
 
 function saveCourses() {
@@ -112,6 +101,17 @@ function setJalaliDate(dateStr) {
     }
 }
 
+function calculateDuration(start, end) {
+    const startMin = timeToMinutes(start);
+    const endMin = timeToMinutes(end);
+    const diff = endMin - startMin;
+    const hours = Math.floor(diff / 60);
+    const minutes = diff % 60;
+    if (hours === 0) return `${minutes} دقیقه`;
+    if (minutes === 0) return `${hours} ساعت`;
+    return `${hours}.${Math.round(minutes/60*10)} ساعت`;
+}
+
 function buildScheduleTable() {
     const thead = document.querySelector('#scheduleTable thead');
     const tbody = document.querySelector('#scheduleTable tbody');
@@ -171,16 +171,23 @@ function buildScheduleTable() {
                 const cell = document.createElement('td');
                 cell.colSpan = slots;
                 cell.className = 'course-cell';
-                cell.style.backgroundColor = course.color || getRandomColor();
+                cell.style.backgroundColor = getRandomColor();
+                cell.dataset.courseId = course.id;
                 
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'course-name';
                 nameSpan.textContent = course.name;
                 cell.appendChild(nameSpan);
                 
+                const durationSpan = document.createElement('span');
+                durationSpan.className = 'course-duration';
+                durationSpan.textContent = calculateDuration(course.startTime, course.endTime);
+                cell.appendChild(durationSpan);
+                
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn';
-                deleteBtn.textContent = '×';
+                deleteBtn.textContent = '✕';
+                deleteBtn.title = 'حذف';
                 deleteBtn.onclick = (e) => {
                     e.stopPropagation();
                     removeCourse(course.id);
@@ -239,18 +246,20 @@ function checkTimeConflict(newCourse, existingCourses) {
     
     existingCourses.forEach(existingCourse => {
         if (existingCourse.id === newCourse.id) return;
-        if (newCourse.examDate === existingCourse.examDate) {
-            const newExamStart = timeToMinutes(newCourse.examStartTime);
-            const newExamEnd = timeToMinutes(newCourse.examEndTime);
-            const existingExamStart = timeToMinutes(existingCourse.examStartTime);
-            const existingExamEnd = timeToMinutes(existingCourse.examEndTime);
-            
-            if (newExamStart < existingExamEnd && newExamEnd > existingExamStart) {
-                conflicts.push({
-                    type: 'exam',
-                    course: existingCourse,
-                    message: `تداخل امتحان با درس "${existingCourse.name}"`
-                });
+        if (newCourse.examDate && existingCourse.examDate && newCourse.examDate === existingCourse.examDate) {
+            if (newCourse.examStartTime && existingCourse.examStartTime && newCourse.examEndTime && existingCourse.examEndTime) {
+                const newExamStart = timeToMinutes(newCourse.examStartTime);
+                const newExamEnd = timeToMinutes(newCourse.examEndTime);
+                const existingExamStart = timeToMinutes(existingCourse.examStartTime);
+                const existingExamEnd = timeToMinutes(existingCourse.examEndTime);
+                
+                if (newExamStart < existingExamEnd && newExamEnd > existingExamStart) {
+                    conflicts.push({
+                        type: 'exam',
+                        course: existingCourse,
+                        message: `تداخل امتحان با درس "${existingCourse.name}"`
+                    });
+                }
             }
         }
     });
@@ -288,6 +297,8 @@ function removeCourse(courseId) {
     saveCourses();
     buildScheduleTable();
     updateCourseList();
+    updateTotalUnits();
+    updateTotalDays();
 }
 
 function editCourse(courseId) {
@@ -297,6 +308,7 @@ function editCourse(courseId) {
     editingCourseId = courseId;
     document.getElementById('editingCourseId').value = courseId;
     document.getElementById('courseName').value = course.name;
+    document.getElementById('courseUnits').value = (course.units !== undefined && course.units !== null) ? course.units : 3;
     
     document.querySelectorAll('input[name="courseDays"]').forEach(cb => {
         cb.checked = course.days.includes(parseInt(cb.value));
@@ -304,14 +316,17 @@ function editCourse(courseId) {
     
     document.getElementById('startTime').value = course.startTime;
     document.getElementById('endTime').value = course.endTime;
-    setJalaliDate(course.examDate);
-    document.getElementById('examStartTime').value = course.examStartTime;
-    document.getElementById('examEndTime').value = course.examEndTime;
+    setJalaliDate(course.examDate || '');
+    document.getElementById('examStartTime').value = course.examStartTime || '';
+    document.getElementById('examEndTime').value = course.examEndTime || '';
     
     document.getElementById('formTitle').textContent = 'ویرایش درس';
-    document.getElementById('submitBtn').textContent = 'ذخیره تغییرات';
+    document.getElementById('submitBtn').textContent = '💾 ذخیره تغییرات';
     
     showErrors([]);
+
+    document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('courseName').focus({ preventScroll: true });
 }
 
 function resetForm() {
@@ -326,8 +341,9 @@ function resetForm() {
     document.getElementById('examDay').value = '';
     document.getElementById('examStartTime').value = '';
     document.getElementById('examEndTime').value = '';
+    document.getElementById('courseUnits').value = 3;
     document.getElementById('formTitle').textContent = 'افزودن درس جدید';
-    document.getElementById('submitBtn').textContent = 'افزودن به برنامه';
+    document.getElementById('submitBtn').textContent = '💾 افزودن به برنامه';
     showErrors([]);
 }
 
@@ -339,16 +355,20 @@ function updateCourseList() {
     
     selectedCourses.forEach(course => {
         const li = document.createElement('li');
+        li.dataset.courseId = course.id;
         
         const courseInfo = document.createElement('div');
         courseInfo.className = 'course-info';
         
         const daysText = course.days.map(day => dayNames[day]).join('، ');
+        const examInfo = course.examDate ? `امتحان: ${course.examDate} - ${course.examStartTime || '?'} تا ${course.examEndTime || '?'}` : 'امتحان: ندارد';
+        const unitsDisplay = (course.units !== undefined && course.units !== null) ? course.units : 3;
         
         courseInfo.innerHTML = `
             <strong>${course.name}</strong><br>
+            <small>واحد: ${unitsDisplay}</small><br>
             <small>کلاس: ${daysText} - ${course.startTime} تا ${course.endTime}</small><br>
-            <small>امتحان: ${course.examDate} - ${course.examStartTime} تا ${course.examEndTime}</small>
+            <small>${examInfo}</small>
         `;
         
         const courseActions = document.createElement('div');
@@ -356,12 +376,12 @@ function updateCourseList() {
         
         const editBtn = document.createElement('button');
         editBtn.className = 'btn-edit';
-        editBtn.textContent = 'ویرایش';
+        editBtn.innerHTML = '✏️ ویرایش';
         editBtn.onclick = () => editCourse(course.id);
         
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'btn-delete';
-        deleteBtn.textContent = 'حذف';
+        deleteBtn.innerHTML = '🗑️ حذف';
         deleteBtn.onclick = () => removeCourse(course.id);
         
         courseActions.appendChild(editBtn);
@@ -373,12 +393,33 @@ function updateCourseList() {
     });
 }
 
+function updateTotalUnits() {
+    const total = selectedCourses.reduce((sum, course) => sum + ((course.units !== undefined && course.units !== null) ? course.units : 0), 0);
+    document.getElementById('totalUnits').textContent = total;
+}
+
+function updateTotalDays() {
+    const daysSet = new Set();
+    selectedCourses.forEach(course => {
+        course.days.forEach(day => daysSet.add(day));
+    });
+    document.getElementById('totalDays').textContent = daysSet.size;
+}
+
 document.getElementById('courseForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const courseName = document.getElementById('courseName').value.trim();
+    const courseUnitsInput = document.getElementById('courseUnits').value.trim();
+    const courseUnits = parseInt(courseUnitsInput);
+    
     if (!courseName) {
         alert('نام درس را وارد کنید!');
+        return;
+    }
+    
+    if (isNaN(courseUnits) || courseUnits < 0) {
+        alert('تعداد واحد باید عددی نامنفی باشد!');
         return;
     }
     
@@ -404,25 +445,11 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
         return;
     }
     
-    if (!examDate) {
-        alert('تاریخ امتحان را کامل انتخاب کنید!');
-        return;
-    }
-    
-    if (!examStartTime || !examEndTime) {
-        alert('ساعت شروع و پایان امتحان را انتخاب کنید!');
-        return;
-    }
-    
-    if (timeToMinutes(examStartTime) >= timeToMinutes(examEndTime)) {
-        alert('ساعت پایان امتحان باید بعد از شروع باشد!');
-        return;
-    }
-    
     const editingId = document.getElementById('editingCourseId').value;
     
     const courseData = {
         name: courseName,
+        units: courseUnits,
         days: selectedDays,
         startTime,
         endTime,
@@ -446,7 +473,7 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
         newCourse = {
             id: ++courseId,
             ...courseData,
-            color: getRandomColor()
+            color: STRONG_PINK
         };
     }
     
@@ -468,6 +495,23 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
     showErrors([]);
     buildScheduleTable();
     updateCourseList();
+    updateTotalUnits();
+    updateTotalDays();
+    
+    if (editingId) {
+        setTimeout(() => {
+            const cell = document.querySelector(`.course-cell[data-course-id="${editingId}"]`);
+            if (cell) {
+                cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                const listItem = document.querySelector(`li[data-course-id="${editingId}"]`);
+                if (listItem) {
+                    listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }, 0);
+    }
+    
     resetForm();
 });
 
@@ -476,3 +520,18 @@ populateTimeSelects();
 populateJalaliDateSelects();
 buildScheduleTable();
 updateCourseList();
+updateTotalUnits();
+updateTotalDays();
+
+const darkModeToggle = document.getElementById('darkModeToggle');
+darkModeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+});
+
+if (localStorage.getItem('darkMode') === 'enabled') {
+    document.body.classList.add('dark-mode');
+    darkModeToggle.textContent = '☀️';
+}
