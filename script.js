@@ -11,7 +11,7 @@ for (let hour = 7; hour <= 18; hour++) {
     workingHours.push(`${hourStr}:45`);
 }
 
-const SOFT_PINK = '#f06292';
+const STRONG_PINK = '#e91e63';
 
 const jalaliMonths = [
     'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
@@ -19,7 +19,7 @@ const jalaliMonths = [
 ];
 
 function getRandomColor() {
-    return SOFT_PINK;
+    return STRONG_PINK;
 }
 
 function saveCourses() {
@@ -473,7 +473,7 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
         newCourse = {
             id: ++courseId,
             ...courseData,
-            color: SOFT_PINK
+            color: STRONG_PINK
         };
     }
     
@@ -513,19 +513,6 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
     }
     
     resetForm();
-});
-
-document.getElementById('downloadImageBtn').addEventListener('click', function() {
-    const scheduleContainer = document.getElementById('scheduleContainer');
-    html2canvas(scheduleContainer, {
-        backgroundColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff',
-        scale: 2
-    }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'schedule.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    });
 });
 
 loadCourses();
