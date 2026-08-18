@@ -11,7 +11,7 @@ for (let hour = 7; hour <= 18; hour++) {
     workingHours.push(`${hourStr}:45`);
 }
 
-const STRONG_PINK = '#e91e63';
+const COURSE_PINK = '#d4507a';
 
 const jalaliMonths = [
     'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
@@ -19,7 +19,7 @@ const jalaliMonths = [
 ];
 
 function getRandomColor() {
-    return STRONG_PINK;
+    return COURSE_PINK;
 }
 
 function saveCourses() {
@@ -473,7 +473,7 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
         newCourse = {
             id: ++courseId,
             ...courseData,
-            color: STRONG_PINK
+            color: COURSE_PINK
         };
     }
     
