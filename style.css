@@ -1,0 +1,367 @@
+@font-face {
+    font-family: 'Rastin';
+    src: url('Rastin.woff2') format('woff2'),
+         url('Rastin.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rastin', 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e8f0fe;
+    min-height: 100vh;
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+h1 {
+    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-weight: bold;
+    text-align: center;
+    color: #4a7ec9;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+h2 {
+    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-weight: bold;
+    color: #d46b8a;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f8b6c8;
+    padding-bottom: 10px;
+}
+
+.form-section {
+    background-color: #f3f7fe;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    border: 1px solid #b5c8e8;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #4a7ec9;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #b5c8e8;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-weight: bold;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #6b9be0;
+}
+
+.jalali-date {
+    display: flex;
+    gap: 10px;
+}
+
+.jalali-date select {
+    flex: 1;
+}
+
+.days-checkbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    background-color: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #b5c8e8;
+}
+
+.days-checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 0;
+    user-select: none;
+    color: #444;
+}
+
+.days-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #6b9be0;
+    cursor: pointer;
+}
+
+button[type="submit"] {
+    background-color: #6b9be0;
+    color: #ffffff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    width: 100%;
+    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+button[type="submit"]:hover {
+    background-color: #4a7ec9;
+    transform: translateY(-2px);
+}
+
+#printBtn {
+    background-color: #d46b8a;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 15px;
+    transition: background-color 0.3s;
+}
+
+#printBtn:hover {
+    background-color: #b5546e;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+
+#scheduleTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 900px;
+}
+
+#scheduleTable th {
+    background-color: #7da9e3;
+    color: #ffffff;
+    padding: 8px 4px;
+    text-align: center;
+    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+#scheduleTable th.hour-label {
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #6b9be0;
+}
+
+#scheduleTable th.quarter-label {
+    font-size: 10px;
+    background-color: #a8c6f0;
+    padding: 2px 0;
+}
+
+#scheduleTable td {
+    border: 1px solid #e0e0e0;
+    padding: 4px;
+    text-align: center;
+    height: 40px;
+    position: relative;
+    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    min-width: 30px;
+    max-width: 60px;
+}
+
+#scheduleTable td.day-label {
+    background-color: #e8f0fe;
+    font-weight: bold;
+    color: #4a7ec9;
+    white-space: nowrap;
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    min-width: 70px;
+}
+
+.course-cell {
+    color: #ffffff;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    cursor: default;
+    position: relative;
+    transition: background-color 0.3s;
+    padding: 8px;
+    height: auto;
+}
+
+.course-cell .course-name {
+    display: block;
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-word;
+    margin-bottom: 15px;
+}
+
+.course-cell .delete-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: none;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    font-size: 9px;
+    line-height: 1;
+}
+
+.error-container {
+    margin: 20px 0;
+}
+
+.error-message {
+    background-color: #ffe8ee;
+    border: 1px solid #f8b6c8;
+    color: #c94f6d;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.selected-courses ul {
+    list-style: none;
+}
+
+.selected-courses li {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.selected-courses li .course-info {
+    flex: 1;
+}
+
+.selected-courses li .course-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit,
+.btn-delete {
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-edit {
+    background-color: #f9a8c2;
+    color: #ffffff;
+}
+
+.btn-edit:hover {
+    background-color: #d46b8a;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background-color: #f78fb0;
+    color: #ffffff;
+}
+
+.btn-delete:hover {
+    background-color: #e06a8e;
+    transform: translateY(-1px);
+}
+
+@media print {
+    @page {
+        size: landscape;
+    }
+    body {
+        background: white;
+        padding: 0;
+    }
+    .form-section,
+    .error-container,
+    .selected-courses,
+    #printBtn {
+        display: none !important;
+    }
+    .container {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        max-width: none;
+    }
+    .schedule-section {
+        margin: 0;
+    }
+    .table-container {
+        overflow: visible;
+    }
+    #scheduleTable {
+        min-width: 100%;
+    }
+}

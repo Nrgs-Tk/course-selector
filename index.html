@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم انتخاب واحد</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🗓️ سیستم انتخاب واحد</h1>
+        
+        <div class="form-section">
+            <h2 id="formTitle">افزودن درس جدید</h2>
+            <form id="courseForm">
+                <input type="hidden" id="editingCourseId" value="">
+                
+                <div class="form-group">
+                    <label for="courseName">نام درس:</label>
+                    <input type="text" id="courseName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>روزهای برگزاری:</label>
+                    <div class="days-checkbox">
+                        <label><input type="checkbox" name="courseDays" value="0"> شنبه</label>
+                        <label><input type="checkbox" name="courseDays" value="1"> یکشنبه</label>
+                        <label><input type="checkbox" name="courseDays" value="2"> دوشنبه</label>
+                        <label><input type="checkbox" name="courseDays" value="3"> سه‌شنبه</label>
+                        <label><input type="checkbox" name="courseDays" value="4"> چهارشنبه</label>
+                        <label><input type="checkbox" name="courseDays" value="5"> پنجشنبه</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="startTime">ساعت شروع کلاس:</label>
+                    <select id="startTime" required>
+                        <option value="">انتخاب ساعت...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="endTime">ساعت پایان کلاس:</label>
+                    <select id="endTime" required>
+                        <option value="">انتخاب ساعت...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="examDate">تاریخ امتحان :</label>
+                    <div class="jalali-date">
+                        <select id="examYear" required>
+                            <option value="">سال</option>
+                        </select>
+                        <select id="examMonth" required>
+                            <option value="">ماه</option>
+                        </select>
+                        <select id="examDay" required>
+                            <option value="">روز</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="examStartTime">ساعت شروع امتحان:</label>
+                    <select id="examStartTime" required>
+                        <option value="">انتخاب ساعت...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="examEndTime">ساعت پایان امتحان:</label>
+                    <select id="examEndTime" required>
+                        <option value="">انتخاب ساعت...</option>
+                    </select>
+                </div>
+                
+                <button type="submit" id="submitBtn">افزودن به برنامه</button>
+            </form>
+        </div>
+        
+        <div id="errorMessages" class="error-container"></div>
+        
+        <div class="schedule-section">
+            <h2>برنامه هفتگی</h2>
+            <button type="button" id="printBtn" onclick="window.print()">📄 ذخیره PDF</button>
+            <div class="table-container">
+                <table id="scheduleTable">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="selected-courses">
+            <h2>دروس انتخاب شده</h2>
+            <ul id="courseList"></ul>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
