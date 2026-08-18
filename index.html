@@ -55,7 +55,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="examDate">تاریخ امتحان (شمسی):</label>
+                    <label for="examDate">تاریخ امتحان :</label>
                     <div class="jalali-date">
                         <select id="examYear">
                             <option value="">سال</option>
@@ -91,11 +91,8 @@
         
         <div class="schedule-section">
             <h2>برنامه هفتگی</h2>
-            <div class="action-buttons">
-                <button type="button" id="printBtn" onclick="window.print()">📄 ذخیره PDF</button>
-                <button type="button" id="downloadImageBtn">🖼️ ذخیره عکس</button>
-            </div>
-            <div class="table-container" id="scheduleContainer">
+            <button type="button" id="printBtn" onclick="window.print()">📄 ذخیره PDF</button>
+            <div class="table-container">
                 <table id="scheduleTable">
                     <thead>
                     </thead>
@@ -106,20 +103,17 @@
         </div>
         
         <div class="selected-courses">
-            <div class="stats-container">
-                <div class="total-units">
-                    مجموع واحدهای انتخابی: <span id="totalUnits">0</span>
-                </div>
-                <div class="total-days">
-                    تعداد روزهای حضور: <span id="totalDays">0</span>
-                </div>
-            </div>
             <h2>دروس انتخاب شده</h2>
+            <div class="total-units">
+                مجموع واحدهای انتخابی: <span id="totalUnits">0</span>
+            </div>
+            <div class="total-days">
+                تعداد روزهای حضور در دانشگاه: <span id="totalDays">0</span>
+            </div>
             <ul id="courseList"></ul>
         </div>
     </div>
     
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
