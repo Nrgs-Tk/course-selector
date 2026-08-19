@@ -13,7 +13,7 @@ for (let hour = 7; hour <= 18; hour++) {
 
 const coursePalette = [
     '#E91E63',
-    '#e418d7',
+    '#e418c9',
     '#9C27B0',
     '#673AB7',
     '#3c4eb3',
@@ -574,6 +574,57 @@ document.getElementById('examMonth').addEventListener('input', function() {
     if (this.value.length === 2 && /^\d{2}$/.test(this.value) && parseInt(this.value) <= 12) {
         document.getElementById('examYear').focus();
     }
+});
+
+document.getElementById('downloadImageBtn').addEventListener('click', function() {
+    const scheduleSection = document.querySelector('.schedule-section');
+    const table = document.querySelector('#scheduleTable');
+    
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'fixed';
+    tempDiv.style.top = '-10000px';
+    tempDiv.style.left = '-10000px';
+    tempDiv.style.width = (table.scrollWidth + 40) + 'px';
+    tempDiv.style.backgroundColor = getComputedStyle(document.body).backgroundColor;
+    
+    const clone = scheduleSection.cloneNode(true);
+    
+    const buttons = clone.querySelectorAll('button');
+    buttons.forEach(btn => btn.style.display = 'none');
+    
+    const tableContainer = clone.querySelector('.table-container');
+    tableContainer.style.overflow = 'visible';
+    tableContainer.style.width = '100%';
+    const tableClone = clone.querySelector('#scheduleTable');
+    tableClone.style.minWidth = '0';
+    tableClone.style.width = 'auto';
+    
+    tempDiv.appendChild(clone);
+    document.body.appendChild(tempDiv);
+    
+    html2canvas(clone, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: getComputedStyle(document.body).backgroundColor,
+        width: table.scrollWidth + 40,
+        height: clone.offsetHeight,
+        scrollX: 0,
+        scrollY: 0
+    }).then(canvas => {
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = 'schedule.png';
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+        }, 'image/png');
+        document.body.removeChild(tempDiv);
+    }).catch(error => {
+        console.error('Error capturing image:', error);
+        alert('خطا در ذخیره تصویر');
+        document.body.removeChild(tempDiv);
+    });
 });
 
 loadCourses();
