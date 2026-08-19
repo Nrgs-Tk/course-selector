@@ -24,7 +24,7 @@ const coursePalette = [
     '#4CAF50',
     '#8BC34A',
     '#EFFD5F',
-    '#FFF200',
+    '#FFD700',
     '#FF9800',
     '#FF5722'
 ];
