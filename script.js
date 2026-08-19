@@ -27,7 +27,7 @@ const coursePalette = [
     '#FED049',
     '#FF9800',
     '#FF0000',
-    '#795C34'
+    '#8D6E63'
 ];
 
 function getCourseColor(courseOrId) {
