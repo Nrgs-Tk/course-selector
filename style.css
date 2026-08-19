@@ -193,12 +193,23 @@ button[type="submit"]:hover {
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
+.stats-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.stats-row .total-units,
+.stats-row .total-days {
+    flex: 1;
+    margin-bottom: 0;
+}
+
 .total-units {
     background-color: #ffe8ee;
     border: 2px solid #ff4081;
     border-radius: 8px;
     padding: 8px;
-    margin-bottom: 10px;
     font-weight: bold;
     color: #e91e63;
     text-align: center;
@@ -211,7 +222,6 @@ button[type="submit"]:hover {
     border: 2px solid #6b9be0;
     border-radius: 8px;
     padding: 8px;
-    margin-bottom: 10px;
     font-weight: bold;
     color: #4a7ec9;
     text-align: center;
@@ -566,86 +576,107 @@ body.dark-mode .error-message {
 @media print {
     @page {
         size: landscape;
-        margin: 5mm;
+        margin: 8mm;
     }
+    
     body {
         background: white !important;
-        padding: 0;
-        margin: 0;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
+    
     .form-section,
     .error-container,
     .selected-courses,
     #printBtn,
-    #darkModeToggle {
+    #darkModeToggle,
+    .header {
         display: none !important;
     }
+    
     .container {
-        box-shadow: none;
-        padding: 0;
-        margin: 0;
-        max-width: none;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: none !important;
         background-color: #ffffff !important;
-        width: 100%;
+        width: 100% !important;
     }
+    
     .schedule-section {
-        margin: 0;
-        padding: 0;
+        margin: 0 !important;
+        padding: 0 !important;
     }
+    
     .schedule-section h2 {
-        font-size: 18px;
-        margin-bottom: 5px;
-        padding-bottom: 3px;
+        font-size: 16px !important;
+        margin-bottom: 5px !important;
+        padding-bottom: 3px !important;
+        text-align: center !important;
     }
+    
     .table-container {
-        overflow: visible;
-        margin: 0;
+        overflow: visible !important;
+        margin: 0 !important;
     }
+    
     #scheduleTable {
-        min-width: 100%;
-        width: 100%;
-        table-layout: fixed;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
         background-color: #ffffff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
-    #scheduleTable th {
-        font-size: 8px;
-        padding: 2px 1px;
-        white-space: nowrap;
-    }
-    #scheduleTable th.hour-label {
-        font-size: 8px;
-    }
-    #scheduleTable th.quarter-label {
-        font-size: 6px;
-        padding: 1px 0;
-    }
+    
+    #scheduleTable th,
     #scheduleTable td {
-        font-size: 7px;
-        padding: 1px;
-        height: auto;
-        min-width: 0;
-        max-width: none;
+        font-size: 6px !important;
+        padding: 1px !important;
+        border: 0.5px solid #999 !important;
+        text-align: center !important;
+        word-break: break-word !important;
+        overflow: hidden !important;
     }
+    
+    #scheduleTable th.hour-label {
+        font-size: 6px !important;
+    }
+    
+    #scheduleTable th.quarter-label {
+        display: none !important;
+    }
+    
     #scheduleTable td.day-label {
-        font-size: 8px;
-        min-width: 40px;
-        white-space: nowrap;
+        font-size: 7px !important;
+        min-width: 30px !important;
+        background-color: #e8f0fe !important;
     }
+    
     .course-cell {
-        padding: 1px;
+        font-size: 6px !important;
+        padding: 1px !important;
     }
+    
     .course-cell .course-name {
-        font-size: 7px;
-        margin-bottom: 5px;
+        font-size: 6px !important;
+        margin-bottom: 3px !important;
+        line-height: 1.1 !important;
     }
+    
     .course-duration {
-        font-size: 6px;
+        font-size: 5px !important;
     }
+    
     .course-cell .delete-btn {
-        display: none;
+        display: none !important;
+    }
+    
+    tr {
+        page-break-inside: avoid !important;
     }
 }
