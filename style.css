@@ -93,6 +93,12 @@ h2 {
     font-size: 14px;
 }
 
+.required {
+    color: #ff0000;
+    font-weight: bold;
+    margin-left: 2px;
+}
+
 .form-group input[type="text"],
 .form-group input[type="number"],
 .form-group input[type="date"],
@@ -371,10 +377,11 @@ button[type="submit"]:hover {
     margin-bottom: 10px;
 }
 
-.course-duration {
+.course-cell .instructor-name {
     display: block;
     font-size: 10px;
     opacity: 0.9;
+    margin-bottom: 10px;
 }
 
 .course-cell .delete-btn {
@@ -743,7 +750,7 @@ body.dark-mode .error-message {
         line-height: 1.1 !important;
     }
     
-    .course-duration {
+    .course-cell .instructor-name {
         font-size: 5px !important;
     }
     
