@@ -56,10 +56,13 @@ function loadCourses() {
     const savedCourses = localStorage.getItem('selectedCourses');
     if (savedCourses) {
         selectedCourses = JSON.parse(savedCourses);
-        selectedCourses = selectedCourses.map(course => ({
-            ...course,
-            color: course.color || getCourseColor(course.id)
-        }));
+        selectedCourses = selectedCourses
+            .filter(course => course.days && course.days.length > 0)
+            .map(course => ({
+                ...course,
+                color: course.color || getCourseColor(course.id),
+                instructor: course.instructor || ''
+            }));
     }
     const savedCourseId = localStorage.getItem('courseId');
     if (savedCourseId) {
@@ -133,17 +136,6 @@ function setJalaliDate(dateStr) {
     }
 }
 
-function calculateDuration(start, end) {
-    const startMin = timeToMinutes(start);
-    const endMin = timeToMinutes(end);
-    const diff = endMin - startMin;
-    const hours = Math.floor(diff / 60);
-    const minutes = diff % 60;
-    if (hours === 0) return `${minutes} دقیقه`;
-    if (minutes === 0) return `${hours} ساعت`;
-    return `${hours}.${Math.round(minutes/60*10)} ساعت`;
-}
-
 function buildScheduleTable() {
     const thead = document.querySelector('#scheduleTable thead');
     const tbody = document.querySelector('#scheduleTable tbody');
@@ -215,10 +207,12 @@ function buildScheduleTable() {
                 nameSpan.textContent = course.name;
                 cell.appendChild(nameSpan);
                 
-                const durationSpan = document.createElement('span');
-                durationSpan.className = 'course-duration';
-                durationSpan.textContent = calculateDuration(course.startTime, course.endTime);
-                cell.appendChild(durationSpan);
+                if (course.instructor) {
+                    const instructorSpan = document.createElement('span');
+                    instructorSpan.className = 'instructor-name';
+                    instructorSpan.textContent = course.instructor;
+                    cell.appendChild(instructorSpan);
+                }
                 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn';
@@ -347,7 +341,8 @@ function editCourse(courseId) {
     editingCourseId = courseId;
     document.getElementById('editingCourseId').value = courseId;
     document.getElementById('courseName').value = course.name;
-    document.getElementById('courseUnits').value = (course.units !== undefined && course.units !== null) ? course.units : 3;
+    document.getElementById('instructorName').value = course.instructor || '';
+    document.getElementById('courseUnits').value = (course.units !== undefined && course.units !== null) ? course.units : '';
     
     document.querySelectorAll('input[name="courseDays"]').forEach(cb => {
         cb.checked = course.days.includes(parseInt(cb.value));
@@ -385,12 +380,13 @@ function resetForm() {
     document.querySelectorAll('input[name="courseDays"]').forEach(cb => cb.checked = false);
     document.getElementById('startTime').value = '';
     document.getElementById('endTime').value = '';
+    document.getElementById('instructorName').value = '';
     document.getElementById('examYear').value = '';
     document.getElementById('examMonth').value = '';
     document.getElementById('examDay').value = '';
     document.getElementById('examStartTime').value = '';
     document.getElementById('examEndTime').value = '';
-    document.getElementById('courseUnits').value = 3;
+    document.getElementById('courseUnits').value = '';
     document.getElementById('selectedColor').value = '';
     document.querySelectorAll('.color-swatch').forEach(swatch => swatch.classList.remove('selected'));
     document.getElementById('formTitle').textContent = 'افزودن درس جدید';
@@ -413,10 +409,12 @@ function updateCourseList() {
         
         const daysText = course.days.map(day => dayNames[day]).join('، ');
         const examInfo = course.examDate ? `امتحان: ${course.examDate} - ${course.examStartTime || '?'} تا ${course.examEndTime || '?'}` : 'امتحان: ندارد';
-        const unitsDisplay = (course.units !== undefined && course.units !== null) ? course.units : 3;
+        const unitsDisplay = (course.units !== undefined && course.units !== null) ? course.units : '';
+        const instructorDisplay = course.instructor ? `استاد: ${course.instructor}<br>` : '';
         
         courseInfo.innerHTML = `
             <strong>${course.name}</strong><br>
+            ${instructorDisplay}
             <small>واحد: ${unitsDisplay}</small><br>
             <small>کلاس: ${daysText} - ${course.startTime} تا ${course.endTime}</small><br>
             <small>${examInfo}</small>
@@ -461,6 +459,7 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const courseName = document.getElementById('courseName').value.trim();
+    const instructorName = document.getElementById('instructorName').value.trim();
     const courseUnitsInput = document.getElementById('courseUnits').value.trim();
     const courseUnits = parseInt(courseUnitsInput);
     
@@ -509,6 +508,7 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
     
     const courseData = {
         name: courseName,
+        instructor: instructorName,
         units: courseUnits,
         days: selectedDays,
         startTime,
