@@ -115,11 +115,31 @@ h2 {
 
 .jalali-date {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 4px;
+    direction: ltr;
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
 }
 
-.jalali-date select {
-    flex: 1;
+.jalali-date input {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    text-align: center;
+    direction: ltr;
+    padding: 6px 2px;
+    font-size: 13px;
+    border: 2px solid #b5c8e8;
+    border-radius: 6px;
+}
+
+.date-separator {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4a7ec9;
+    user-select: none;
 }
 
 .days-checkbox {
@@ -150,6 +170,35 @@ h2 {
     height: 16px;
     accent-color: #6b9be0;
     cursor: pointer;
+}
+
+.color-palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+    background-color: #ffffff;
+    border: 2px solid #b5c8e8;
+    border-radius: 8px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.color-swatch:hover {
+    transform: scale(1.15);
+}
+
+.color-swatch.selected {
+    border-color: #333;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.2);
 }
 
 button[type="submit"] {
@@ -462,6 +511,16 @@ body.dark-mode .form-group select {
     color: #e0e0e0;
 }
 
+body.dark-mode .jalali-date input {
+    background-color: #1e1e1e;
+    border-color: #90caf9;
+    color: #e0e0e0;
+}
+
+body.dark-mode .date-separator {
+    color: #90caf9;
+}
+
 body.dark-mode .days-checkbox {
     background-color: #1e1e1e;
     border-color: #90caf9;
@@ -469,6 +528,16 @@ body.dark-mode .days-checkbox {
 
 body.dark-mode .days-checkbox label {
     color: #e0e0e0;
+}
+
+body.dark-mode .color-palette {
+    background-color: #1e1e1e;
+    border-color: #90caf9;
+}
+
+body.dark-mode .color-swatch.selected {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
 }
 
 body.dark-mode button[type="submit"] {
