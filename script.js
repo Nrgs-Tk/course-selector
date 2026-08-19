@@ -11,15 +11,31 @@ for (let hour = 7; hour <= 18; hour++) {
     workingHours.push(`${hourStr}:45`);
 }
 
-const COURSE_PINK = '#d4507a';
-
-const jalaliMonths = [
-    'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
-    'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+const coursePalette = [
+    '#E91E63',
+    '#e418d7',
+    '#9C27B0',
+    '#673AB7',
+    '#3c4eb3',
+    '#0e7ad1',
+    '#29afec',
+    '#00BCD4',
+    '#009688',
+    '#4CAF50',
+    '#8BC34A',
+    '#FF9800',
+    '#FF5722',
+    '#db4812',
+    '#e83211',
+    '#f01a0b'
 ];
 
-function getRandomColor() {
-    return COURSE_PINK;
+function getCourseColor(courseOrId) {
+    const id = typeof courseOrId === 'object' ? courseOrId.id : courseOrId;
+    if (typeof courseOrId === 'object' && courseOrId.color) {
+        return courseOrId.color;
+    }
+    return coursePalette[id % coursePalette.length];
 }
 
 function saveCourses() {
@@ -31,6 +47,10 @@ function loadCourses() {
     const savedCourses = localStorage.getItem('selectedCourses');
     if (savedCourses) {
         selectedCourses = JSON.parse(savedCourses);
+        selectedCourses = selectedCourses.map(course => ({
+            ...course,
+            color: course.color || getCourseColor(course.id)
+        }));
     }
     const savedCourseId = localStorage.getItem('courseId');
     if (savedCourseId) {
@@ -52,40 +72,39 @@ function populateTimeSelects() {
     });
 }
 
-function populateJalaliDateSelects() {
-    const yearSelect = document.getElementById('examYear');
-    const monthSelect = document.getElementById('examMonth');
-    const daySelect = document.getElementById('examDay');
-    
-    yearSelect.innerHTML = '<option value="">سال</option>';
-    for (let year = 1405; year <= 1410; year++) {
-        const option = document.createElement('option');
-        option.value = year;
-        option.textContent = year;
-        yearSelect.appendChild(option);
-    }
-    
-    monthSelect.innerHTML = '<option value="">ماه</option>';
-    jalaliMonths.forEach((month, index) => {
-        const option = document.createElement('option');
-        option.value = index + 1;
-        option.textContent = month;
-        monthSelect.appendChild(option);
+function populateColorPalette() {
+    const paletteContainer = document.getElementById('colorPalette');
+    paletteContainer.innerHTML = '';
+    coursePalette.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.style.backgroundColor = color;
+        swatch.dataset.color = color;
+        swatch.addEventListener('click', () => {
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+            swatch.classList.add('selected');
+            document.getElementById('selectedColor').value = color;
+        });
+        paletteContainer.appendChild(swatch);
     });
-    
-    daySelect.innerHTML = '<option value="">روز</option>';
-    for (let day = 1; day <= 31; day++) {
-        const option = document.createElement('option');
-        option.value = day;
-        option.textContent = day;
-        daySelect.appendChild(option);
-    }
+}
+
+function isValidJalaliDate(year, month, day) {
+    if (!year || !month || !day) return false;
+    const y = Number(year);
+    const m = Number(month);
+    const d = Number(day);
+    if (isNaN(y) || isNaN(m) || isNaN(d)) return false;
+    if (y < 1300 || y > 1500) return false;
+    if (m < 1 || m > 12) return false;
+    if (d < 1 || d > 31) return false;
+    return true;
 }
 
 function getJalaliDate() {
-    const year = document.getElementById('examYear').value;
-    const month = document.getElementById('examMonth').value;
-    const day = document.getElementById('examDay').value;
+    const year = document.getElementById('examYear').value.trim();
+    const month = document.getElementById('examMonth').value.trim();
+    const day = document.getElementById('examDay').value.trim();
     if (year && month && day) {
         return `${year}/${month}/${day}`;
     }
@@ -98,6 +117,10 @@ function setJalaliDate(dateStr) {
         document.getElementById('examYear').value = parts[0];
         document.getElementById('examMonth').value = parts[1];
         document.getElementById('examDay').value = parts[2];
+    } else {
+        document.getElementById('examYear').value = '';
+        document.getElementById('examMonth').value = '';
+        document.getElementById('examDay').value = '';
     }
 }
 
@@ -171,7 +194,7 @@ function buildScheduleTable() {
                 const cell = document.createElement('td');
                 cell.colSpan = slots;
                 cell.className = 'course-cell';
-                cell.style.backgroundColor = getRandomColor();
+                cell.style.backgroundColor = course.color || getCourseColor(course);
                 cell.dataset.courseId = course.id;
                 
                 const nameSpan = document.createElement('span');
@@ -322,6 +345,16 @@ function editCourse(courseId) {
     document.getElementById('examStartTime').value = course.examStartTime || '';
     document.getElementById('examEndTime').value = course.examEndTime || '';
     
+    const selectedColor = course.color || getCourseColor(course);
+    document.getElementById('selectedColor').value = selectedColor;
+    document.querySelectorAll('.color-swatch').forEach(swatch => {
+        if (swatch.dataset.color === selectedColor) {
+            swatch.classList.add('selected');
+        } else {
+            swatch.classList.remove('selected');
+        }
+    });
+    
     document.getElementById('formTitle').textContent = 'ویرایش درس';
     document.getElementById('submitBtn').textContent = '💾 ذخیره تغییرات';
     
@@ -344,6 +377,8 @@ function resetForm() {
     document.getElementById('examStartTime').value = '';
     document.getElementById('examEndTime').value = '';
     document.getElementById('courseUnits').value = 3;
+    document.getElementById('selectedColor').value = '';
+    document.querySelectorAll('.color-swatch').forEach(swatch => swatch.classList.remove('selected'));
     document.getElementById('formTitle').textContent = 'افزودن درس جدید';
     document.getElementById('submitBtn').textContent = '💾 افزودن به برنامه';
     showErrors([]);
@@ -428,9 +463,18 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
     const selectedDays = getSelectedDays();
     const startTime = document.getElementById('startTime').value;
     const endTime = document.getElementById('endTime').value;
+    const examYear = document.getElementById('examYear').value.trim();
+    const examMonth = document.getElementById('examMonth').value.trim();
+    const examDay = document.getElementById('examDay').value.trim();
     const examDate = getJalaliDate();
     const examStartTime = document.getElementById('examStartTime').value;
     const examEndTime = document.getElementById('examEndTime').value;
+    const selectedColor = document.getElementById('selectedColor').value;
+    
+    if ((examYear || examMonth || examDay) && !isValidJalaliDate(examYear, examMonth, examDay)) {
+        alert('تاریخ امتحان را به شکل صحیح وارد کنید، مثلاً: 1403/10/15');
+        return;
+    }
     
     if (selectedDays.length === 0) {
         alert('لطفاً حداقل یک روز را انتخاب کنید!');
@@ -457,7 +501,8 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
         endTime,
         examDate,
         examStartTime,
-        examEndTime
+        examEndTime,
+        color: selectedColor || undefined
     };
     
     let newCourse;
@@ -467,15 +512,17 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
             alert('درس مورد نظر یافت نشد!');
             return;
         }
+        const existingCourse = selectedCourses[existingIndex];
         newCourse = {
-            ...selectedCourses[existingIndex],
-            ...courseData
+            ...existingCourse,
+            ...courseData,
+            color: selectedColor || existingCourse.color || getCourseColor(existingCourse.id)
         };
     } else {
         newCourse = {
             id: ++courseId,
             ...courseData,
-            color: COURSE_PINK
+            color: selectedColor || getCourseColor(courseId)
         };
     }
     
@@ -517,9 +564,21 @@ document.getElementById('courseForm').addEventListener('submit', function(e) {
     resetForm();
 });
 
+document.getElementById('examDay').addEventListener('input', function() {
+    if (this.value.length === 2 && /^\d{2}$/.test(this.value) && parseInt(this.value) <= 31) {
+        document.getElementById('examMonth').focus();
+    }
+});
+
+document.getElementById('examMonth').addEventListener('input', function() {
+    if (this.value.length === 2 && /^\d{2}$/.test(this.value) && parseInt(this.value) <= 12) {
+        document.getElementById('examYear').focus();
+    }
+});
+
 loadCourses();
 populateTimeSelects();
-populateJalaliDateSelects();
+populateColorPalette();
 buildScheduleTable();
 updateCourseList();
 updateTotalUnits();
