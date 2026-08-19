@@ -208,6 +208,8 @@ function buildScheduleTable() {
         
         tbody.appendChild(row);
     }
+    
+    document.querySelector('#scheduleTable').classList.add('print-friendly');
 }
 
 function timeToMinutes(time) {
