@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>انتخاب واحد </title>
+    <title>انتخاب واحد</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -55,17 +55,13 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="examDate">تاریخ امتحان :</label>
+                    <label>تاریخ امتحان :</label>
                     <div class="jalali-date">
-                        <select id="examYear">
-                            <option value="">سال</option>
-                        </select>
-                        <select id="examMonth">
-                            <option value="">ماه</option>
-                        </select>
-                        <select id="examDay">
-                            <option value="">روز</option>
-                        </select>
+                        <input type="text" id="examYear" placeholder="سال" maxlength="4" inputmode="numeric">
+                        <span class="date-separator">/</span>
+                        <input type="text" id="examMonth" placeholder="ماه" maxlength="2" inputmode="numeric">
+                        <span class="date-separator">/</span>
+                        <input type="text" id="examDay" placeholder="روز" maxlength="2" inputmode="numeric">
                     </div>
                 </div>
                 
@@ -81,6 +77,12 @@
                     <select id="examEndTime">
                         <option value="">انتخاب ساعت...</option>
                     </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>رنگ درس در برنامه:</label>
+                    <div class="color-palette" id="colorPalette"></div>
+                    <input type="hidden" id="selectedColor" value="">
                 </div>
                 
                 <button type="submit" id="submitBtn">💾 افزودن به برنامه</button>
