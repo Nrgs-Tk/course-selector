@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🗓️ انتخاب واحد </h1>
+            <h1>🗓️ انتخاب واحد</h1>
             <button id="darkModeToggle" title="تغییر حالت تاریک/روشن">🌙</button>
         </div>
         
@@ -19,17 +19,22 @@
                 <input type="hidden" id="editingCourseId" value="">
                 
                 <div class="form-group">
-                    <label for="courseName">نام درس:</label>
+                    <label for="courseName">نام درس: <span class="required">*</span></label>
                     <input type="text" id="courseName" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="courseUnits">تعداد واحد:</label>
-                    <input type="text" id="courseUnits" inputmode="numeric" pattern="[0-9]*" value="3" required>
+                    <label for="instructorName">نام استاد:</label>
+                    <input type="text" id="instructorName">
                 </div>
                 
                 <div class="form-group">
-                    <label>روزهای برگزاری:</label>
+                    <label for="courseUnits">تعداد واحد: <span class="required">*</span></label>
+                    <input type="text" id="courseUnits" inputmode="numeric" pattern="[0-9]*" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>روزهای برگزاری: <span class="required">*</span></label>
                     <div class="days-checkbox">
                         <label><input type="checkbox" name="courseDays" value="0"> شنبه</label>
                         <label><input type="checkbox" name="courseDays" value="1"> یکشنبه</label>
@@ -41,21 +46,21 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="startTime">ساعت شروع کلاس:</label>
+                    <label for="startTime">ساعت شروع کلاس: <span class="required">*</span></label>
                     <select id="startTime" required>
                         <option value="">انتخاب ساعت...</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="endTime">ساعت پایان کلاس:</label>
+                    <label for="endTime">ساعت پایان کلاس: <span class="required">*</span></label>
                     <select id="endTime" required>
                         <option value="">انتخاب ساعت...</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label>تاریخ امتحان :</label>
+                    <label>تاریخ امتحان:</label>
                     <div class="jalali-date">
                         <input type="text" id="examYear" placeholder="سال" maxlength="4" inputmode="numeric">
                         <span class="date-separator">/</span>
