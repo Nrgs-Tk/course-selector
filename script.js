@@ -38,6 +38,15 @@ function getCourseColor(courseOrId) {
     return coursePalette[id % coursePalette.length];
 }
 
+function getContrastColor(hexColor) {
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+}
+
 function saveCourses() {
     localStorage.setItem('selectedCourses', JSON.stringify(selectedCourses));
     localStorage.setItem('courseId', courseId);
@@ -194,7 +203,11 @@ function buildScheduleTable() {
                 const cell = document.createElement('td');
                 cell.colSpan = slots;
                 cell.className = 'course-cell';
-                cell.style.backgroundColor = course.color || getCourseColor(course);
+                
+                const bgColor = course.color || getCourseColor(course);
+                cell.style.backgroundColor = bgColor;
+                cell.style.color = getContrastColor(bgColor);
+                
                 cell.dataset.courseId = course.id;
                 
                 const nameSpan = document.createElement('span');
@@ -211,6 +224,7 @@ function buildScheduleTable() {
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.textContent = '✕';
                 deleteBtn.title = 'حذف';
+                deleteBtn.style.color = getContrastColor(bgColor);
                 deleteBtn.onclick = (e) => {
                     e.stopPropagation();
                     removeCourse(course.id);
@@ -576,7 +590,11 @@ document.getElementById('examMonth').addEventListener('input', function() {
     }
 });
 
-document.getElementById('downloadImageBtn').addEventListener('click', function() {
+document.getElementById('downloadImageBtn').addEventListener('click', async function() {
+    if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+    }
+
     const scheduleSection = document.querySelector('.schedule-section');
     const table = document.querySelector('#scheduleTable');
     
@@ -599,18 +617,24 @@ document.getElementById('downloadImageBtn').addEventListener('click', function()
     tableClone.style.minWidth = '0';
     tableClone.style.width = 'auto';
     
+    clone.querySelectorAll('*').forEach(el => {
+        el.style.fontFamily = "'Rastin', 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif";
+    });
+    
     tempDiv.appendChild(clone);
     document.body.appendChild(tempDiv);
     
-    html2canvas(clone, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: getComputedStyle(document.body).backgroundColor,
-        width: table.scrollWidth + 40,
-        height: clone.offsetHeight,
-        scrollX: 0,
-        scrollY: 0
-    }).then(canvas => {
+    try {
+        const canvas = await html2canvas(clone, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: getComputedStyle(document.body).backgroundColor,
+            width: table.scrollWidth + 40,
+            height: clone.offsetHeight,
+            scrollX: 0,
+            scrollY: 0
+        });
+        
         canvas.toBlob(function(blob) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -619,12 +643,13 @@ document.getElementById('downloadImageBtn').addEventListener('click', function()
             link.click();
             URL.revokeObjectURL(url);
         }, 'image/png');
+        
         document.body.removeChild(tempDiv);
-    }).catch(error => {
+    } catch (error) {
         console.error('Error capturing image:', error);
         alert('خطا در ذخیره تصویر');
         document.body.removeChild(tempDiv);
-    });
+    }
 });
 
 loadCourses();
