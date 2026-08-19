@@ -201,6 +201,12 @@ h2 {
     box-shadow: 0 0 0 3px rgba(0,0,0,0.2);
 }
 
+.schedule-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
 button[type="submit"] {
     background-color: #6b9be0;
     color: #ffffff;
@@ -222,7 +228,8 @@ button[type="submit"]:hover {
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
-#printBtn {
+#printBtn,
+#downloadImageBtn {
     background-color: #e91e63;
     color: #ffffff;
     border: none;
@@ -232,11 +239,11 @@ button[type="submit"]:hover {
     font-family: 'Rastin', 'Vazirmatn', sans-serif;
     font-weight: bold;
     font-size: 14px;
-    margin-bottom: 10px;
     transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
-#printBtn:hover {
+#printBtn:hover,
+#downloadImageBtn:hover {
     background-color: #c2185b;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
@@ -549,12 +556,14 @@ body.dark-mode button[type="submit"]:hover {
     background-color: #64b5f6;
 }
 
-body.dark-mode #printBtn {
+body.dark-mode #printBtn,
+body.dark-mode #downloadImageBtn {
     background-color: #ffb3c6;
     color: #1e1e1e;
 }
 
-body.dark-mode #printBtn:hover {
+body.dark-mode #printBtn:hover,
+body.dark-mode #downloadImageBtn:hover {
     background-color: #ff80ab;
 }
 
@@ -659,7 +668,7 @@ body.dark-mode .error-message {
     .form-section,
     .error-container,
     .selected-courses,
-    #printBtn,
+    .schedule-actions,
     #darkModeToggle,
     .header {
         display: none !important;
