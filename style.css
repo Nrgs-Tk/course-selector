@@ -236,13 +236,27 @@ button[type="submit"]:hover {
     padding: 8px 16px;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Rastin', 'Vazirmatn', sans-serif;
+    font-family: 'Rastin', 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
     font-weight: bold;
     font-size: 14px;
     transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
-#printBtn:hover,
+#downloadImageBtn {
+    background-color: #e91e63;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Rastin', 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
 #downloadImageBtn:hover {
     background-color: #c2185b;
     transform: translateY(-2px);
