@@ -30,6 +30,10 @@ const coursePalette = [
     '#7e4a1a'
 ];
 
+const courseListAlternateColors = ['#ffe4e1', '#e0f7fa'];
+const pinkEditColor = '#ff3578';
+const blueEditColor = '#2196F3';
+
 function getCourseColor(courseOrId) {
     const id = typeof courseOrId === 'object' ? courseOrId.id : courseOrId;
     if (typeof courseOrId === 'object' && courseOrId.color) {
@@ -400,9 +404,14 @@ function updateCourseList() {
     
     const dayNames = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه'];
     
-    selectedCourses.forEach(course => {
+    selectedCourses.forEach((course, index) => {
         const li = document.createElement('li');
         li.dataset.courseId = course.id;
+        
+        const isBlue = index % 2 === 1;
+        const bgColor = isBlue ? courseListAlternateColors[1] : courseListAlternateColors[0];
+        li.style.backgroundColor = bgColor;
+        li.style.color = '#333333';
         
         const courseInfo = document.createElement('div');
         courseInfo.className = 'course-info';
@@ -420,12 +429,26 @@ function updateCourseList() {
             <small>${examInfo}</small>
         `;
         
+        courseInfo.style.color = '#333333';
+        courseInfo.querySelectorAll('strong, small').forEach(el => el.style.color = '#333333');
+        
         const courseActions = document.createElement('div');
         courseActions.className = 'course-actions';
         
         const editBtn = document.createElement('button');
         editBtn.className = 'btn-edit';
         editBtn.innerHTML = '✏️ ویرایش';
+        
+        const editColor = isBlue ? blueEditColor : pinkEditColor;
+        editBtn.style.backgroundColor = editColor;
+        editBtn.style.color = '#ffffff';
+        editBtn.onmouseover = () => { 
+            editBtn.style.backgroundColor = isBlue ? '#1976D2' : '#f06292'; 
+        };
+        editBtn.onmouseout = () => { 
+            editBtn.style.backgroundColor = editColor; 
+        };
+        
         editBtn.onclick = () => editCourse(course.id);
         
         const deleteBtn = document.createElement('button');
@@ -650,6 +673,61 @@ document.getElementById('downloadImageBtn').addEventListener('click', async func
         alert('خطا در ذخیره تصویر');
         document.body.removeChild(tempDiv);
     }
+});
+
+document.getElementById('exportJsonBtn').addEventListener('click', function() {
+    const data = {
+        courses: selectedCourses,
+        courseId: courseId
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'schedule-backup.json';
+    link.click();
+    URL.revokeObjectURL(url);
+});
+
+document.getElementById('importJsonBtn').addEventListener('click', function() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json,application/json';
+    fileInput.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const data = JSON.parse(event.target.result);
+                if (data && Array.isArray(data.courses) && typeof data.courseId === 'number') {
+                    const valid = data.courses.every(c => c.id && c.name && Array.isArray(c.days) && c.startTime && c.endTime);
+                    if (!valid) {
+                        alert('فایل JSON نامعتبر است.');
+                        return;
+                    }
+                    selectedCourses = data.courses.map(c => ({
+                        ...c,
+                        color: c.color || getCourseColor(c.id),
+                        instructor: c.instructor || ''
+                    }));
+                    courseId = data.courseId;
+                    saveCourses();
+                    buildScheduleTable();
+                    updateCourseList();
+                    updateTotalUnits();
+                    updateTotalDays();
+                    alert('برنامه با موفقیت بارگذاری شد.');
+                } else {
+                    alert('ساختار فایل JSON صحیح نیست.');
+                }
+            } catch (err) {
+                alert('خطا در خواندن فایل JSON.');
+            }
+        };
+        reader.readAsText(file);
+    };
+    fileInput.click();
 });
 
 loadCourses();
